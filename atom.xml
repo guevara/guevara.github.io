@@ -1,16 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[一个有匠心的手艺人]]></title>
   <link href="http://guevara.github.io/atom.xml" rel="self"/>
   <link href="http://guevara.github.io/"/>
-  <updated>2013-09-23T14:21:16+08:00</updated>
+  <updated>2014-04-21T18:19:02+08:00</updated>
   <id>http://guevara.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[bingo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hello, Octopress]]></title>
+    <link href="http://guevara.github.io/blog/2014/04/21/hello/"/>
+    <updated>2014-04-21T18:04:00+08:00</updated>
+    <id>http://guevara.github.io/blog/2014/04/21/hello</id>
+    <content type="html"><![CDATA[<h3 id="section">代码高亮测试</h3>
+
+<p>c</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>七段码显示</span><a href="http://www.ioccc.org/2006/sykes2/sykes2.c">代码链接</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="n">main</span><span class="p">(</span><span class="n">_</span><span class="p">){</span><span class="n">_</span><span class="o">^</span><span class="mi">448</span><span class="o">&amp;&amp;</span><span class="n">main</span><span class="p">(</span><span class="o">-~</span><span class="n">_</span><span class="p">);</span><span class="n">putchar</span><span class="p">(</span><span class="o">--</span><span class="n">_</span><span class="o">%</span><span class="mi">64</span><span class="o">?</span><span class="mi">32</span><span class="o">|-~</span><span class="mi">7</span><span class="p">[</span><span class="n">__TIME__</span><span class="o">-</span><span class="n">_</span><span class="o">/</span><span class="mi">8</span><span class="o">%</span><span class="mi">8</span><span class="p">][</span><span class="s">&quot;&gt;&#39;txiZ^(~z?&quot;</span><span class="o">-</span><span class="mi">48</span><span class="p">]</span><span class="o">&gt;&gt;</span><span class="s">&quot;;;;====~$::199&quot;</span><span class="p">[</span><span class="n">_</span><span class="o">*</span><span class="mi">2</span><span class="o">&amp;</span><span class="mi">8</span><span class="o">|</span><span class="n">_</span><span class="o">/</span><span class="mi">64</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">_</span><span class="o">&amp;</span><span class="mi">2</span><span class="o">?</span><span class="mi">1</span><span class="o">:</span><span class="mi">8</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="o">&amp;</span><span class="mi">1</span><span class="o">:</span><span class="mi">10</span><span class="p">);}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ruby</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>Discover if a number is prime</span><a href="http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/">Source Article</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">class</span> <span class="nc">Fixnum</span>
+</span><span class="line">  <span class="k">def</span> <span class="nf">prime?</span>
+</span><span class="line">    <span class="p">(</span><span class="s1">&#39;1&#39;</span> <span class="o">*</span> <span class="nb">self</span><span class="p">)</span> <span class="o">!~</span> <span class="sr">/^1?$|^(11+?)\1+$/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="latex">Latex数学公式测试</h3>
+
+<p>行内公式$\exp(-\frac{x^2}{2})$测试</p>
+
+<p>公式测试一</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\begin{align*}
+  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
+  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
+  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
+      \vdots & \ddots & \vdots \\
+      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
+    \end{array} \right)
+  \left( \begin{array}{c}
+      y_1 \\
+      \vdots \\
+      y_n
+    \end{array} \right)
+\end{align*}
+ %]]&gt;</script>
+
+<p>公式测试二</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\begin{align}
+\mbox{Union: } & A\cup B = \{x\mid x\in A \mbox{ or } x\in B\} \\
+\mbox{Concatenation: } & A\circ B  = \{xy\mid x\in A \mbox{ and } y\in B\} \\
+\mbox{Star: } & A^\star  = \{x_1x_2\ldots x_k \mid  k\geq 0 \mbox{ and each } x_i\in A\} \\
+\end{align}
+ %]]&gt;</script>
+
+]]></content>
+  </entry>
   
 </feed>
