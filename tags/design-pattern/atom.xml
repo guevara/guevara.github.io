@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tag: design pattern | 一个有匠心的手艺人]]></title>
+  <link href="http://guevara.github.io/tags/design-pattern/atom.xml" rel="self"/>
+  <link href="http://guevara.github.io/"/>
+  <updated>2014-04-27T22:13:56+08:00</updated>
+  <id>http://guevara.github.io/</id>
+  <author>
+    <name><![CDATA[bingo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[[译]设计模式滥用之Hello World]]></title>
+    <link href="http://guevara.github.io/blog/2014/04/27/the-abuse-of-design-patterns-in-writing-a-hello-world-program/"/>
+    <updated>2014-04-27T11:27:00+08:00</updated>
+    <id>http://guevara.github.io/blog/2014/04/27/the-abuse-of-design-patterns-in-writing-a-hello-world-program</id>
+    <content type="html"><![CDATA[<div class="note info">
+  <h5>摘要</h5>
+  <p>本文译自<a href="http://taskinoor.wordpress.com/2011/09/21/the-abuse-of-design-patterns-in-writing-a-hello-world-program/" target="_blank" title="The Abuse of Design Patterns in writing a Hello World Program">The Abuse of Design Patterns in writing a Hello World Program</a></p>
+</div>
+
+<p><blockquote><p>设计模式流行之初，我曾在某新闻组里看到一条评论，说有人号称他们试图倾尽23个GoF设计模式去编写一个奇葩程序。不过他们说最终没有成，极其所能也只用到其中20个。他们希望客户叫他们返工，没准能加塞另外3个。</p></p><p><p>试图用遍所有模式是行不通的，终将以生拼硬凑的设计告终——投机取巧的设计充满百无一用的灵活性。这年头软件太过复杂了。我们不能猜测还要什么，而应该关注于本该要什么。</p></blockquote></p>
+
+<p><strong>gamma</strong><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> </p>
+
+<p>大家刚开始学习设计模式时，很少考虑模式的适用场景，想方设法到处套用，觉得模式用得越多，设计越好。结果产生大量不必要复杂的代码。<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
+
+<p>与其说是“运用模式”，不如说是“滥用模式”。有人试图在<strong>Hello World</strong>程序中套用模式，不可避免地导致滥用。</p>
+
+<p>让我们考察一个示例。这是一个经典问题： 编写一个程序，打印字符串<code>Hello World</code>至标准输出。</p>
+
+<p>编程新手会写出下面的代码（Java语言）：</p>
+
+<p><code>java
+System.out.println("hello world");
+</code></p>
+
+<p>这段代码看起来超乎简单。能否加点设计模式？接下来…</p>
+
+<p>首先，定义两个接口<code>Subject</code>和<code>Observer</code>，加入<strong>观察者模式</strong>。</p>
+
+<p>``` java
+public interface Subject {
+    public void attach(Observer observer);
+    public void detach(Observer observer);
+    public void notifyObservers();
+}</p>
+
+<p>public interface Observer {
+    public void update(Subject subject);
+}
+```</p>
+
+<p>然后，定义两个类<code>HelloWorldSubject</code>和<code>HelloWorldObserver</code>实现以上两个接口。</p>
+
+<p>``` java
+public class HelloWorldSubject implements Subject {</p>
+
+<pre><code>private ArrayList&lt;Observer&gt; observers;
+private String str;
+
+public HelloWorldSubject() {
+    super();
+
+    observers = new ArrayList&lt;Observer&gt;();
+}
+
+public void attach(Observer observer) {
+    observers.add(observer);
+}
+
+public void detach(Observer observer) {
+    observers.remove(observer);
+}
+
+public void notifyObservers() {
+    Iterator&lt;Observer&gt; iter = observers.iterator();
+    
+    while (iter.hasNext()) {
+        Observer observer = iter.next();
+        observer.update(this);
+    }
+}
+
+public String getStr() {
+    return str;
+}
+
+public void setStr(String str) {
+    this.str = str;
+    notifyObservers();
+} }
+</code></pre>
+
+<p>public class HelloWorldObserver implements Observer {</p>
+
+<pre><code>public void update(Subject subject) {
+    HelloWorldSubject sub = (HelloWorldSubject)subject;
+    System.out.println(sub.getStr());
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>接着，再添加一个<strong>命令模式</strong>。</p>
+
+<p>``` java
+public interface Command {
+    void execute();
+}</p>
+
+<p>public class HelloWorldCommand implements Command {</p>
+
+<pre><code>private HelloWorldSubject subject;
+
+public HelloWorldCommand(Subject subject) {
+    super();
+
+    this.subject = (HelloWorldSubject)subject;
+}
+
+public void execute() {
+    subject.setStr("hello world");
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>然后添加一个<strong>抽象工厂模式</strong>。</p>
+
+<p>``` java
+public interface AbstractFactory {
+    public Subject createSubject();
+    public Observer createObserver();
+    public Command createCommand(Subject subject);
+}</p>
+
+<p>public class HelloWorldFactory implements AbstractFactory {</p>
+
+<pre><code>public Subject createSubject() {
+    return new HelloWorldSubject();
+}
+
+public Observer createObserver() {
+    return new HelloWorldObserver(); 
+}
+
+public Command createCommand(Subject subject) {
+    return new HelloWorldCommand(subject);
+} } ```
+</code></pre>
+
+<p>再添加一个<strong>单例模式</strong>即大功告成。</p>
+
+<p>``` java
+public class FactoryMakerSingleton {</p>
+
+<pre><code>private static FactoryMakerSingleton instance = null;
+private AbstractFactory factory;
+
+private FactoryMakerSingleton() {
+    factory = new HelloWorldFactory();
+}
+
+public static synchronized FactoryMakerSingleton getInstance() {
+    if (instance == null) {
+        instance = new FactoryMakerSingleton();
+    }
+    
+    return instance;
+}
+
+public AbstractFactory getFactory() {
+    return factory;
+} } ```
+</code></pre>
+
+<p>最后编写一个主类（用作测试）。</p>
+
+<p>``` java
+public class AbuseDesignPatterns {</p>
+
+<pre><code>public static void main(String[] args) {
+    AbstractFactory factory = FactoryMakerSingleton.getInstance().getFactory();
+    
+    Subject subject = factory.createSubject();
+    subject.attach(factory.createObserver());
+    
+    Command command = factory.createCommand(subject);
+    
+    command.execute();
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>程序运行输出： <code>Hello World</code></p>
+
+<p>哇，我们已经在<strong>Hello World</strong>程序中成功地运用四种模式。（嗯，其实还能添加一个迭代器模式，不过已经引用了内置的迭代器，Java中经常如此）。这必须是一个拿得出手的设计呀。那么问题出在哪儿呢？</p>
+
+<ol>
+  <li>对于一个<strong>Hello World</strong>程序而言代码过于复杂。</li>
+  <li>包含多余的灵活性。</li>
+  <li>设计和实现的时间成本是彻彻底底的浪费。</li>
+  <li>引发了类膨胀。</li>
+  <li>违反了KISS原则。<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+  <li>没满足问题的要求。问题目的本在于学习打印标准输出，以上代码却缪以千里。</li>
+</ol>
+
+<h4 id="section">总结</h4>
+<p>设计模式应具体场景具体运用，不要为运用而运用。设计模式是构建大型软件的强大工具。恰到好处，切忌滥用。</p>
+
+<p>从<a href="http://dl.dropbox.com/u/17612367/2011_09_21_abuse_design_patterns/AbuseDesignPatterns.zip">这儿</a>下载文中的代码。欢迎来函反馈。如果谁有办法在<strong>Hello World</strong>程序中堆砌更多设计模式，再好不过了。</p>
+
+<h4 id="section-1">参考文章</h4>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p><a href="http://www.artima.com/lejava/articles/gammadp.html">如何运用设计模式</a><a href="#fnref:1" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>第13章：现实世界中的模式<a href="http://www.amazon.com/First-Design-Patterns-Elisabeth-Freeman/dp/0596007124">Head First设计模式</a><a href="#fnref:2" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p><a href="http://en.wikipedia.org/wiki/KISS_principle">KISS原则</a><a href="#fnref:3" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

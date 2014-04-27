@@ -2,15 +2,25 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://guevara.github.io/blog/2014/04/21/hello/</loc>
-        <lastmod>2014-04-21T18:19:01+08:00</lastmod>
+        <lastmod>2014-04-27T18:14:26+08:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://guevara.github.io/blog/2014/04/27/the-abuse-of-design-patterns-in-writing-a-hello-world-program/
+        </loc>
+        <lastmod>2014-04-27T22:13:37+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://guevara.github.io/about/</loc>
+        <lastmod>2014-04-27T18:13:55+08:00</lastmod>
     </url>
     <url>
         <loc>http://guevara.github.io/blog/archives/</loc>
-        <lastmod>2014-04-21T18:19:01+08:00</lastmod>
+        <lastmod>2014-04-27T22:13:37+08:00</lastmod>
     </url>
     <url>
         <loc>http://guevara.github.io/</loc>
-        <lastmod>2014-04-21T18:19:01+08:00</lastmod>
+        <lastmod>2014-04-27T22:13:37+08:00</lastmod>
     </url>
     <url>
         <loc>http://guevara.github.io/robots.txt</loc>

@@ -4,7 +4,7 @@
   <title><![CDATA[一个有匠心的手艺人]]></title>
   <link href="http://guevara.github.io/atom.xml" rel="self"/>
   <link href="http://guevara.github.io/"/>
-  <updated>2014-04-21T18:39:42+08:00</updated>
+  <updated>2014-04-27T22:13:56+08:00</updated>
   <id>http://guevara.github.io/</id>
   <author>
     <name><![CDATA[bingo]]></name>
@@ -12,6 +12,351 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[译]设计模式滥用之Hello World]]></title>
+    <link href="http://guevara.github.io/blog/2014/04/27/the-abuse-of-design-patterns-in-writing-a-hello-world-program/"/>
+    <updated>2014-04-27T11:27:00+08:00</updated>
+    <id>http://guevara.github.io/blog/2014/04/27/the-abuse-of-design-patterns-in-writing-a-hello-world-program</id>
+    <content type="html"><![CDATA[<div class="note info">
+  <h5>摘要</h5>
+  <p>本文译自<a href="http://taskinoor.wordpress.com/2011/09/21/the-abuse-of-design-patterns-in-writing-a-hello-world-program/" target="_blank" title="The Abuse of Design Patterns in writing a Hello World Program">The Abuse of Design Patterns in writing a Hello World Program</a></p>
+</div>
+
+<blockquote><p>设计模式流行之初，我曾在某新闻组里看到一条评论，说有人号称他们试图倾尽23个GoF设计模式去编写一个奇葩程序。不过他们说最终没有成，极其所能也只用到其中20个。他们希望客户叫他们返工，没准能加塞另外3个。</p><p>试图用遍所有模式是行不通的，终将以生拼硬凑的设计告终——投机取巧的设计充满百无一用的灵活性。这年头软件太过复杂了。我们不能猜测还要什么，而应该关注于本该要什么。</p></blockquote>
+
+<p><strong>gamma</strong><sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> </p>
+
+<p>大家刚开始学习设计模式时，很少考虑模式的适用场景，想方设法到处套用，觉得模式用得越多，设计越好。结果产生大量不必要复杂的代码。<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
+
+<p>与其说是“运用模式”，不如说是“滥用模式”。有人试图在<strong>Hello World</strong>程序中套用模式，不可避免地导致滥用。</p>
+
+<p>让我们考察一个示例。这是一个经典问题： 编写一个程序，打印字符串<code>Hello World</code>至标准输出。</p>
+
+<p>编程新手会写出下面的代码（Java语言）：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;hello world&quot;</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这段代码看起来超乎简单。能否加点设计模式？接下来…</p>
+
+<p>首先，定义两个接口<code>Subject</code>和<code>Observer</code>，加入<strong>观察者模式</strong>。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Subject</span> <span class="o">{</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">attach</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">);</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">detach</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">);</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyObservers</span><span class="o">();</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Observer</span> <span class="o">{</span>
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后，定义两个类<code>HelloWorldSubject</code>和<code>HelloWorldObserver</code>实现以上两个接口。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldSubject</span> <span class="kd">implements</span> <span class="n">Subject</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">private</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;</span> <span class="n">observers</span><span class="o">;</span>
+</span><span class="line">    <span class="kd">private</span> <span class="n">String</span> <span class="n">str</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="nf">HelloWorldSubject</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="kd">super</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">observers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">attach</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">observers</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">detach</span><span class="o">(</span><span class="n">Observer</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">observers</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyObservers</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">observers</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">while</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">Observer</span> <span class="n">observer</span> <span class="o">=</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">();</span>
+</span><span class="line">            <span class="n">observer</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getStr</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">str</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setStr</span><span class="o">(</span><span class="n">String</span> <span class="n">str</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">;</span>
+</span><span class="line">        <span class="n">notifyObservers</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldObserver</span> <span class="kd">implements</span> <span class="n">Observer</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">HelloWorldSubject</span> <span class="n">sub</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloWorldSubject</span><span class="o">)</span><span class="n">subject</span><span class="o">;</span>
+</span><span class="line">        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">sub</span><span class="o">.</span><span class="na">getStr</span><span class="o">());</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>接着，再添加一个<strong>命令模式</strong>。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Command</span> <span class="o">{</span>
+</span><span class="line">    <span class="kt">void</span> <span class="nf">execute</span><span class="o">();</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldCommand</span> <span class="kd">implements</span> <span class="n">Command</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">private</span> <span class="n">HelloWorldSubject</span> <span class="n">subject</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="nf">HelloWorldCommand</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="kd">super</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">this</span><span class="o">.</span><span class="na">subject</span> <span class="o">=</span> <span class="o">(</span><span class="n">HelloWorldSubject</span><span class="o">)</span><span class="n">subject</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">subject</span><span class="o">.</span><span class="na">setStr</span><span class="o">(</span><span class="s">&quot;hello world&quot;</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后添加一个<strong>抽象工厂模式</strong>。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">AbstractFactory</span> <span class="o">{</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">();</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">Observer</span> <span class="nf">createObserver</span><span class="o">();</span>
+</span><span class="line">    <span class="kd">public</span> <span class="n">Command</span> <span class="nf">createCommand</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">);</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldFactory</span> <span class="kd">implements</span> <span class="n">AbstractFactory</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">Subject</span> <span class="nf">createSubject</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">new</span> <span class="nf">HelloWorldSubject</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">Observer</span> <span class="nf">createObserver</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">new</span> <span class="nf">HelloWorldObserver</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">Command</span> <span class="nf">createCommand</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="k">new</span> <span class="nf">HelloWorldCommand</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>再添加一个<strong>单例模式</strong>即大功告成。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FactoryMakerSingleton</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">private</span> <span class="kd">static</span> <span class="n">FactoryMakerSingleton</span> <span class="n">instance</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+</span><span class="line">    <span class="kd">private</span> <span class="n">AbstractFactory</span> <span class="n">factory</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">private</span> <span class="nf">FactoryMakerSingleton</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HelloWorldFactory</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">synchronized</span> <span class="n">FactoryMakerSingleton</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FactoryMakerSingleton</span><span class="o">();</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="n">AbstractFactory</span> <span class="nf">getFactory</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">factory</span><span class="o">;</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后编写一个主类（用作测试）。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="java"><span class="line"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AbuseDesignPatterns</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">AbstractFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="n">FactoryMakerSingleton</span><span class="o">.</span><span class="na">getInstance</span><span class="o">().</span><span class="na">getFactory</span><span class="o">();</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">Subject</span> <span class="n">subject</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">createSubject</span><span class="o">();</span>
+</span><span class="line">        <span class="n">subject</span><span class="o">.</span><span class="na">attach</span><span class="o">(</span><span class="n">factory</span><span class="o">.</span><span class="na">createObserver</span><span class="o">());</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">Command</span> <span class="n">command</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">createCommand</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">command</span><span class="o">.</span><span class="na">execute</span><span class="o">();</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>程序运行输出： <code>Hello World</code></p>
+
+<p>哇，我们已经在<strong>Hello World</strong>程序中成功地运用四种模式。（嗯，其实还能添加一个迭代器模式，不过已经引用了内置的迭代器，Java中经常如此）。这必须是一个拿得出手的设计呀。那么问题出在哪儿呢？</p>
+
+<ol>
+  <li>对于一个<strong>Hello World</strong>程序而言代码过于复杂。</li>
+  <li>包含多余的灵活性。</li>
+  <li>设计和实现的时间成本是彻彻底底的浪费。</li>
+  <li>引发了类膨胀。</li>
+  <li>违反了KISS原则。<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup></li>
+  <li>没满足问题的要求。问题目的本在于学习打印标准输出，以上代码却缪以千里。</li>
+</ol>
+
+<h4 id="section">总结</h4>
+<p>设计模式应具体场景具体运用，不要为运用而运用。设计模式是构建大型软件的强大工具。恰到好处，切忌滥用。</p>
+
+<p>从<a href="http://dl.dropbox.com/u/17612367/2011_09_21_abuse_design_patterns/AbuseDesignPatterns.zip">这儿</a>下载文中的代码。欢迎来函反馈。如果谁有办法在<strong>Hello World</strong>程序中堆砌更多设计模式，再好不过了。</p>
+
+<h4 id="section-1">参考文章</h4>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p><a href="http://www.artima.com/lejava/articles/gammadp.html">如何运用设计模式</a><a href="#fnref:1" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:2">
+      <p>第13章：现实世界中的模式<a href="http://www.amazon.com/First-Design-Patterns-Elisabeth-Freeman/dp/0596007124">Head First设计模式</a><a href="#fnref:2" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:3">
+      <p><a href="http://en.wikipedia.org/wiki/KISS_principle">KISS原则</a><a href="#fnref:3" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Hello, Octopress]]></title>
