@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Algorithm | 一位有匠心的手艺人]]></title>
+  <link href="http://guevara.github.io/blog/categories/algorithm/atom.xml" rel="self"/>
+  <link href="http://guevara.github.io/"/>
+  <updated>2014-05-04T22:56:07+08:00</updated>
+  <id>http://guevara.github.io/</id>
+  <author>
+    <name><![CDATA[bingo]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[[译]快速斐波那契算法]]></title>
+    <link href="http://guevara.github.io/blog/2014/05/03/fast-fibonacci/"/>
+    <updated>2014-05-03T08:55:00+08:00</updated>
+    <id>http://guevara.github.io/blog/2014/05/03/fast-fibonacci</id>
+    <content type="html"><![CDATA[<div class="note info">
+  <h5>摘要</h5>
+  <p>本文译自<a href="" target="_blank" title="http://hbfs.wordpress.com/2012/05/22/fast-fibonacci/">Fast Fibonacci</a></p>
+</div>
+
+<p><a href="http://en.wikipedia.org/wiki/Fibonacci_number">斐波那契数列</a>在诸多方面，从<a href="http://www.maths.surrey.ac.uk/hosted-sites/R.Knott/Fibonacci/fibnat.html#seeds">头状花序</a>到<a href="http://en.wikipedia.org/wiki/Universal_code_%28data_compression%29">通用编码</a>（如<a href="http://books.google.ca/books?id=81AfzW6vux4C&amp;pg=PA100&amp;lpg=PA100&amp;dq=%22taboo+codes%22&amp;source=bl&amp;ots=PVUooaK7Fm&amp;sig=hdBqPpvYlRNWskAMrVawTO6i_k4&amp;hl=en&amp;sa=X&amp;ei=P0WyT9qmLsqIgwfa34m7CQ&amp;redir_esc=y#v=onepage&amp;q=%22taboo%20codes%22&amp;f=false">禁忌编码</a>）表现出种种有趣的性质。研究高效计算斐氏数列的过程充满乐趣。</p>
+
+<p>斐波那契数列的经典公式表示为如下递推形式：</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+F_n=\begin{cases}
+    1 & \mathrm{if~}n\leqslant{2} \\
+    F_{n-1}+F_{n-2} &\mathrm{otherwise}
+\end{cases}
+ %]]&gt;</script>
+
+<p>由此引出其直观（朴素）的递归实现：</p>
+
+<p><code>c
+uint64_t fibo_rec(uint64_t n)
+{
+    if (n &lt;= 2)
+        return 1;
+    else
+        return fibo_rec(n - 1) + fibo_rec(n - 2);
+}
+</code></p>
+
+<p>看上去很完美，可是计算<script type="math/tex">F_n</script>的过程中产生了<script type="math/tex">O(F_n)</script>次递归调用！运行时间呈指数增长（因为<script type="math/tex">F_n \approx \phi^n</script>，其中<script type="math/tex">\phi=\frac{1}{2}(1+\sqrt{5})</script>为黄金比例）。</p>
+
+<p>通过显式地优化尾递可以消除递归调用：</p>
+
+<p>``` c
+uint64<em>t fibo_iter(uint64_t n)
+{
+    uint64_t n</em>1 = 1, n_2 = 0;</p>
+
+<pre><code>for (uint64_t i = 0; i &lt; n; i++)
+{
+    uint64_t t = n_1 + n_2;
+    n_2 = n_1;
+    n_1 = t;
+}
+
+return n_1; } ```
+</code></pre>
+
+<p>这次计算<script type="math/tex">F_n</script>的时间复杂度下降到<script type="math/tex">O(n)</script>，大大优于原始递归版本。迭代版本借助临时变量保存和，并使用移位寄存器将后继的<strong>斐波那契数列</strong>分别保存到<code>n_2</code>和<code>n_1</code>。有些人可能会忌讳临时变量，那么可以将上述代码重写为： </p>
+
+<p>``` c
+uint64<em>t fibo_iter_var(uint64_t n)
+{
+    uint64_t n</em>1 = 1, n_2 = 0;</p>
+
+<pre><code>for (uint64_t i = 0; i &lt; n; i++)
+{
+    n_1 = n_1 + n_2;
+    n_2 = n_1 - n_2;
+}
+
+return n_1; } ```
+</code></pre>
+
+<p><code>n_2 = n_1 - n_2</code>部分化简得<code>n_1</code>（<script type="math/tex">n_2 \gets n_1 - n_2</script>，即<script type="math/tex">n_2 \gets (n_1 + n_2) - n_2</script>，结果为<script type="math/tex">n_2 \gets n_1</script>）。此处我们通过额外操作抵消掉临时变量，好坏别当别论。</p>
+
+<center>&#8258;</center>
+
+<p>是否有进一步优化的空间？根据以往的经验，线性时间似乎是最好的结果。无独有偶，有些聪明的家伙发现矩阵</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+       0 & 1 \\
+       1 & 1 
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>具有“平移”并增加一个矢量分量的性质。比如</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        0 & 1 \\
+        1 & 1
+    \end{array}
+\right]
+\left[
+    \begin{array}{c}
+        a\\
+        b
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        b\\
+        a + b
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>看上去有几分眼熟吧。事实上我们将<code>a</code>代换为<script type="math/tex">F_ {n-2}</script>，<code>b</code>代换为<script type="math/tex">F_ {n-1}</script>，得</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        0 & 1\\
+        1 & 1
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        F_{n-2}\\
+        F_{n-1}
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        F_{n-2}\\
+        F_{n-1} + F_{n-2}
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{c}
+        F_{n-1}\\
+        F_n
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>有点眉目了！但这是基于已知<script type="math/tex">F_ {n-1}</script>和<script type="math/tex">F_ {n-2}</script>的前提下，一旦成立意味着存在（递归）分解形式：</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        0 & 1\\
+        1 & 1
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        F_{n-2}\\
+        F_{n-1}
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        0 & 1\\
+        1 & 1
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        0 & 1\\
+        1 & 1
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        F_{n-3}\\
+        F_{n-2}
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>反复如此迭代到初始条件<script type="math/tex">F_1 = 1</script>和<script type="math/tex">F_2 = 1</script>，那么有</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        0 & 1\\
+        1 & 1
+    \end{array}
+\right]^n
+\left[
+    \begin{array}{c}
+        1\\
+        1
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{c}
+        F_{n-1}\\
+        F_{n}
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>矩阵运算似乎代价不菲，至少要进行线性次数的矩阵乘法。幸运的是不需要那么多次，我们有办法在<script type="math/tex">O(\lg n)</script>时间复杂度内计算出<script type="math/tex">A^n</script>（此处矩阵维数为常数<script type="math/tex">2 \times{2}</script>，故可视矩阵乘积为常量）。如何计算呢？且观察式子<script type="math/tex">x^5 = (x^2)^2x</script>和<script type="math/tex">x^7 =((x^2)x)^2x</script>。整数情况时<script type="math/tex">x^n</script>计算过程如下：</p>
+
+<p><code>c
+int expo(int x, int n)
+{
+    int t = 1;
+    int y = x;
+    while (n)
+    {
+        if (n &amp; 1)
+            t *= y;
+        y *= y;
+        n &gt;&gt;= 1;
+    }
+    return t;
+}
+</code></p>
+
+<p>矩阵计算方式同理可得。以上代码中<code>t</code>为乘积当前值，<code>y</code>为乘积“平方”。给定两个矩阵</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_t & b_t \\
+        c_t & d_t
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>和</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_y & b_y \\
+        c_y & d_y
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>第一个初始化为单位阵，第二个初始化为斐波那契矩阵。根据矩阵的对称性，<script type="math/tex">c_t</script>和<script type="math/tex">c_y</script>各自恒等于<script type="math/tex">b_t</script>和<script type="math/tex">b_y</script>，这两个变量可以分别消掉。</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_t & b_t \\
+        c_t & d_t
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        a_y & b_y \\
+        c_y & d_y
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        a_t a_y + b_t b_y & a_t b_y + b_t d_y\\
+        --- & b_t b_y + d_t d_y
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>和</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_y & b_y \\
+        c_y & d_y
+    \end{array}
+\right]^2
+=
+\left[
+    \begin{array}{cc}
+        a_y^2 + b_y^2 & b_y(a_y + d_y)\\
+        --- & b_y^2 + d_y^2
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>其中虚线位置表示对称部分。将上述式子代入幂函数，将有</p>
+
+<p>``` c
+uint64_t fibo_expo(uint64_t n)
+{
+    uint64_t a_t = 1, b_t = 0, d_t = 1, // “1”
+            a_y = 0, b_y = 1, d_y = 1; // “y”</p>
+
+<pre><code>while (n)
+{
+    if (n &amp; 1)
+    {
+        // t*=y;
+        uint64_t a = a_t * a_y + b_t * b_y;
+        uint64_t b = a_t * b_y + b_t * d_y;
+        uint64_t d = b_t * b_y + d_t * d_y;
+
+        a_t = a;
+        b_t = b;
+        d_t = d;
+    }
+
+    //y*=y;
+    uint64_t a = a_y * a_y + b_y * b_y;
+    uint64_t b = b_y * (a_y + d_y);
+    uint64_t d = b_y * b_y + d_y * d_y;
+
+    a_y = a;
+    b_y = b;
+    d_y = d;
+
+    n &gt;&gt;= 1;
+}
+return b_t; } ```
+</code></pre>
+
+<p>提取出公共子式，改变赋值顺序，消除多余的临时变量，得</p>
+
+<p>``` c
+uint64_t fibo_expo_var(uint64_t n)
+{
+    uint64_t a_t = 1, b_t = 0, d_t = 1, // “1”
+            a_y = 0, b_y = 1, d_y = 1; // “y”</p>
+
+<pre><code>while (n)
+{
+    if (n &amp; 1)
+    {
+        // t*=y;
+        uint64_t bx = b_t * b_y;
+        b_t = a_t * b_y + b_t * d_y;
+        a_t = a_t * a_y + bx;
+        d_t = bx + d_t * d_y;
+    }
+
+    //y*=y;
+    uint64_t b2 = b_y * b_y;
+    b_y *= (a_y + d_y);
+    a_y = a_y * a_y + b2;
+    d_y = b2 + d_y * d_y;
+
+    n &gt;&gt;= 1;
+}
+return b_t; } ```
+</code></pre>
+
+<center>&#8258;</center>
+
+<p>太棒了，我们找着了一个<script type="math/tex">O(\lg n)</script>的算法来计算斐波那契数列。不过仍有稍加改进的余地。再怎么改进呢？且注意，</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a & b\\
+        b & d
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        a & b\\
+        b & a+b
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>这样一来消去变量<code>d</code>，得到仅包含变量<code>a</code>和<code>b</code>的方程。修改乘积项和平方项使其只包含变量<code>a</code>和<code>b</code>：</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_t & b_t\\
+        b_t & a_t + b_t
+    \end{array}
+\right]
+\left[
+    \begin{array}{cc}
+        a_y & b_y\\
+        b_y & a_y + b_y
+    \end{array}
+\right]
+=
+\left[
+    \begin{array}{cc}
+        a_ta_y+b_t + b_y & a_tb_y + b_t(ay+b_y)\\
+        --- & ---
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>以及</p>
+
+<script type="math/tex; mode=display">% &lt;![CDATA[
+
+\left[
+    \begin{array}{cc}
+        a_y & b_y\\
+        b_y & d_y
+    \end{array}
+\right]^2
+=
+\left[
+    \begin{array}{cc}
+        a_y^2+b_y^2 & a_yb_y+b_y(a_y+b_y)\\
+        --- & ---
+    \end{array}
+\right]
+ %]]&gt;</script>
+
+<p>其中虚线表示无需关心的部分。利用上述结果，可得：</p>
+
+<p>``` c
+uint64<em>t fibo_expo_var</em>2(uint64_t n)
+{
+    uint64_t a_t = 1, b_t = 0, // “1”
+            a_y = 0, b_y = 1; // “y”</p>
+
+<pre><code>while (n)
+{
+    if (n &amp; 1)
+    {
+        // t*=y;
+        uint64_t bx = b_t * b_y;
+        b_t = a_t * b_y + b_t * a_y + bx;
+        a_t = a_t * a_y + bx;
+    }
+
+    //y*=y;
+    uint64_t b2 = b_y * b_y;
+    b_y = 2 * a_y * b_y + b2;
+    a_y = a_y * a_y + b2;
+
+    n &gt;&gt;= 1;
+}
+return b_t; } ```
+</code></pre>
+
+<p>这几个算法就运行速度比较结果如何？原始递归算法效率低得惊人，生成<script type="math/tex">F_ {50}</script>需要一分多钟，而其他算法只花费几微秒。进行10000000（1000万）次迭代测试（使用相同的随机输入，随机数n位于1到70之间），结果如下</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>iter</td>
+      <td>3.29529s</td>
+    </tr>
+    <tr>
+      <td>iter_var</td>
+      <td>3.30153s</td>
+    </tr>
+    <tr>
+      <td>expo</td>
+      <td>2.28118s</td>
+    </tr>
+    <tr>
+      <td>expo_var</td>
+      <td>2.2531s</td>
+    </tr>
+    <tr>
+      <td>expo_var_2</td>
+      <td>2.22531s</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+最后三个版本的确快得多，但是快速乘幂算法版本之间的效率差距并不显著。假如改进程度相比迭代版本没有那么大的话，我们应该意识到刚只是计算相对较小的斐波那契数列。64位无符号整数最大仅允许存储<script type="math/tex">F_{92}</script>（因为<script type="math/tex">log_ \phi 2^{64} \approx 92</script>，<script type="math/tex">F_n \approx \phi^n</script>，所以两边取对数解出n，推出<script type="math/tex">\phi^n = 2^{64}</script>），不过通过大整数（抽象为类）来计算<script type="math/tex">F_{129713151}</script>，远比迭代方法和递归算法快得多得多。</p>
+]]></content>
+  </entry>
+  
+</feed>

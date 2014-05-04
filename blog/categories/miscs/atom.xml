@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: miscs | 一个有匠心的手艺人]]></title>
+  <title><![CDATA[Category: miscs | 一位有匠心的手艺人]]></title>
   <link href="http://guevara.github.io/blog/categories/miscs/atom.xml" rel="self"/>
   <link href="http://guevara.github.io/"/>
-  <updated>2014-04-27T22:13:56+08:00</updated>
+  <updated>2014-05-04T22:56:07+08:00</updated>
   <id>http://guevara.github.io/</id>
   <author>
     <name><![CDATA[bingo]]></name>
@@ -33,7 +33,7 @@
 
 <p>让我们考察一个示例。这是一个经典问题： 编写一个程序，打印字符串<code>Hello World</code>至标准输出。</p>
 
-<p>编程新手会写出下面的代码（Java语言）：</p>
+<p>编程新手会写出如下代码（Java语言）：</p>
 
 <p><code>java
 System.out.println("hello world");
@@ -215,7 +215,7 @@ public class AbuseDesignPatterns {</p>
 </ol>
 
 <h4 id="section">总结</h4>
-<p>设计模式应具体场景具体运用，不要为运用而运用。设计模式是构建大型软件的强大工具。恰到好处，切忌滥用。</p>
+<p>设计模式应具体场景具体运用，不要为运用而运用。设计模式是构建大型软件的强大工具。应恰到好处，切忌滥用。</p>
 
 <p>从<a href="http://dl.dropbox.com/u/17612367/2011_09_21_abuse_design_patterns/AbuseDesignPatterns.zip">这儿</a>下载文中的代码。欢迎来函反馈。如果谁有办法在<strong>Hello World</strong>程序中堆砌更多设计模式，再好不过了。</p>
 
